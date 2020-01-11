@@ -1,0 +1,4 @@
+ch1 : roll
+ch2: pitch
+ch3: throttle
+ch4: yaw
