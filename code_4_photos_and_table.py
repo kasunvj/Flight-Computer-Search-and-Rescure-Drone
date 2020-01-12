@@ -33,15 +33,18 @@ sitl = dronekit_sitl.start_default()
 
 '''
 #Uncomment this when you are running this in raspberry pi
-image_path ="/home/pi/SNR-Drone-Flight-Computer-/raw_images_temp"
-image_save_path = "/home/pi/SNR-Drone-Flight-Computer-/raw_images"
+image_path ="/home/pi/Flight-Computer-Search-and-Rescure-Drone/raw_images_temp"
+image_save_path = "/home/pi/Flight-Computer-Search-and-Rescure-Drone/raw_images"
+image_log_path = "/home/pi/Flight-Computer-Search-and-Rescure-Drone/imagelog_4.txt"
+result_log_file = "/home/pi/Flight-Computer-Search-and-Rescure-Drone/resultlog.txt"
+
 '''
 
 #Uncomment this when you are running this in windos SImulation
-image_path ="D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/raw_images_temp/"
-image_save_path = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/raw_images/"
-image_log_path = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/imagelog_4.txt"
-result_log_file = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/resultlog.txt"
+image_path ="D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/raw_images_temp/"
+image_save_path = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/raw_images/"
+image_log_path = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/imagelog_4.txt"
+result_log_file = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/resultlog.txt"
 
 if not os.path.exists(image_path):
     os.mkdir(image_path)
