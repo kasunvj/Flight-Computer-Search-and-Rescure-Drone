@@ -36,13 +36,19 @@ sitl = dronekit_sitl.start_default()
 image_path ="/home/pi/SNR-Drone-Flight-Computer-/raw_images_temp"
 image_save_path = "/home/pi/SNR-Drone-Flight-Computer-/raw_images"
 '''
+#Creating Wworkspace
+# Folders and Files
+# + raw_images_temp  - this is the temporary image bucket where all the images from pi camera is saved untill those are taken from ANN
+# + raw_images - this is where those images get saved after object detection 
+# + imagelog_4.txt - all images are saved with their ID, time and GPS. written by main drone code
+# + resultlog.txt - detected objects are saved here. written by object detection code
 
-#Uncomment this when you are running this in windos SImulation
-#testing_commit 
-image_path ="D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/raw_images_temp/"
-image_save_path = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/raw_images/"
-image_log_path = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/imagelog_4.txt"
-result_log_file = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/resultlog.txt"
+#Uncomment this when you are running this in windos SImulation 
+
+image_path ="D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/raw_images_temp/"
+image_save_path = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/raw_images/"
+image_log_path = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/imagelog_4.txt"
+result_log_file = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/resultlog.txt"
 
 if not os.path.exists(image_path):
     os.mkdir(image_path)
@@ -65,8 +71,8 @@ else:
 
 
 #if not os.path.exists(image_log_path):
-f = open(image_log_path,'w')
-f.close()
+#f = open(image_log_path,'w')
+#f.close()
 logging.info("Image Log with GPS tag created and reset")
 #else:
 #   logging.info("Image Log with GPS tag created and reset and cleared for the new mission")
@@ -288,6 +294,7 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
     #image tagging
     photo_number = 0;
     
+    time1 = time.time()
 
     while ((position_remaining > 5) or (abs(alt_remaining)> 1)):
         
@@ -298,9 +305,7 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
         position_remaining = position_euclidian_dist(lat,lon,lat0,lon0)*100000
         alt_remaining = height_euclidian_dist(alt,alt0)
 
-        print("Dist:",round(position_remaining,2),"Alt:",round(alt_remaining,2),) 
-
-        
+        print("Dist:",round(position_remaining,2),"Alt:",round(alt_remaining,2))        
         
         
         if os.path.exists(image_path):
@@ -322,19 +327,38 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
                     image_log_file.close()
                     
 
-         try: 
-            result_log = open(result_log_file,'r')
-            data = result_log.readlines()
-            if not len(data) == 0:
+        try: 
+        	result_log = open(result_log_file,'r')
+        	data = result_log.readlines()
+        	if not len(data) == 0:
+        		num = 0
+        		for line in data:
+        			result_info = line.split(",")
+        			print(num,":",result_info[0]," Detected ",result_info[1], " in " ,result_info[2], "% Confidence. Press the number to engage" )
+        			num = num + 1
 
-                for line in data:
-                    result_info = line.split(",")
-                    print(result_info[0])
+        	
 
 
-         except:
-            time.sleep(2)
-            pass
+
+
+        except:
+        	time.sleep(2)
+        	pass
+
+        
+
+        
+
+        if (((time.time()-time1)%5) == 0):
+        	input_number = input("Type the action:")
+        	if (input_number == 'e'):
+        		pass
+        	else:
+        		print("GO to", data)
+
+        
+
 
         time.sleep(0.5)
 
