@@ -5,8 +5,8 @@ logging.basicConfig(format='%(asctime)s - %(message)s',level=logging.INFO)
 logging.info("Flight Checking Procedures")
 #info, debug,warning, eror,critical
 
-#from picamera.array import PiRGBArray
-#from picamera import PiCamera
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 
 import dronekit_sitl
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative # Import DroneKit-Python
@@ -20,50 +20,51 @@ import shutil
 
 #Connection-------------------------------------------
 #SITL
-connection_string = '127.0.0.1:14550'
-sitl = dronekit_sitl.start_default()
+#connection_string = '127.0.0.1:14550'
+#sitl = dronekit_sitl.start_default()
 
 #Actual Drone over micro USB Direrctly
-#(connection_string = '/dev/ttyACM0')
+connection_string = '/dev/ttyACM0'
 
-#connection_string = '192.168.43.220:14550'
+#connection_string = '192.168.0.100:14550'
 
 #Camera and images-----------------------------------------------------
-#camera = PiCamera()
+camera = PiCamera()
 
-'''
+
 #Uncomment this when you are running this in raspberry pi
 image_path ="/home/pi/Flight-Computer-Search-and-Rescure-Drone/raw_images_temp"
 image_save_path = "/home/pi/Flight-Computer-Search-and-Rescure-Drone/raw_images"
 image_log_path = "/home/pi/Flight-Computer-Search-and-Rescure-Drone/imagelog_4.txt"
 result_log_file = "/home/pi/Flight-Computer-Search-and-Rescure-Drone/resultlog.txt"
 
-'''
+
 
 #Uncomment this when you are running this in windos SImulation
+'''
 image_path ="D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/raw_images_temp/"
 image_save_path = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/raw_images/"
 image_log_path = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/imagelog_4.txt"
 result_log_file = "D:/Projects/Research_Project/Flight-Computer-Search-and-Rescure-Drone/resultlog.txt"
-
+'''
 if not os.path.exists(image_path):
     os.mkdir(image_path)
     logging.info("Images temp storage created")
 else:
-	logging.info("Images temp storage exist. All images moved to raw_images folder for the new mission")
-	files = os.listdir(image_path)
-	for f in files:
-		try:
-			shutil.move(image_path+f,image_save_path)
-		except:
-			pass
+    logging.info("Images temp storage exist. All images moved to raw_images folder for the new mission")
+    files = os.listdir(image_path)
+    for f in files:
+        try:
+            shutil.move(image_path+f,image_save_path)
+        except:
+            pass
 
 
 if not os.path.exists(image_save_path):
-	os.mkdir(image_save_path)
-	logging.info("Images save storage created")
+    os.mkdir(image_save_path)
+    logging.info("Images save storage created")
 else:
-	logging.info("Image save storage exists")
+    logging.info("Image save storage exists")
 
 
 #if not os.path.exists(image_log_path):
@@ -71,8 +72,8 @@ f = open(image_log_path,'w')
 f.close()
 logging.info("Image Log with GPS tag created and reset")
 #else:
-#	logging.info("Image Log with GPS tag created and reset and cleared for the new mission")
-#	open(image_log_path,'w').close()
+#   logging.info("Image Log with GPS tag created and reset and cleared for the new mission")
+#   open(image_log_path,'w').close()
 
 
 
@@ -168,7 +169,6 @@ except:
 
 #Radio for emergency control---------------------------------
 
-'''
 
 try:
     # Access channels individually
@@ -227,7 +227,6 @@ try:
 
 except:
     logging.info("Arming : No Go")
-'''
 while not test_com:
     logging.critical("Communication error")
     time.sleep(10)
@@ -236,6 +235,7 @@ print("\nGuidance is internal--------------------------\n")
 
 
 #take off------------------------------------------------
+
 logging.info("Arming Motors")
 vehicle.mode = VehicleMode("GUIDED")
 vehicle.armed = True
@@ -247,6 +247,7 @@ while not vehicle.armed:
 time.sleep(5)
 logging.info("Ready to take off")
 vehicle.simple_takeoff(alti)
+
 
 while True:
     print("Altitude: ", vehicle.location.global_relative_frame.alt)
@@ -275,8 +276,9 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
 
     #sending moving command
     time.sleep(10)
-    vehicle.simple_goto(point)
 
+    vehicle.simple_goto(point)
+    
     #getting details of vehical location
     vehicle_location_info = vehicle.location.global_relative_frame
     lat0 = vehicle_location_info.lat
@@ -306,37 +308,37 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
         
         
         if os.path.exists(image_path):
-        	for r0,d0,f0 in os.walk(image_path):
-        		if len(f0) == 0:
-        			photo_number = photo_number + 1
-        			#takeing image
-        				
-        			#Uncomment this when you are running this in raspberry pi
-        			#camera.capture(os.path.join(image_path,timestamp(current_waypoint,photo_number)))
+            for r0,d0,f0 in os.walk(image_path):
+                if len(f0) == 0:
+                    photo_number = photo_number + 1
+                    #takeing image
+                        
+                    #Uncomment this when you are running this in raspberry pi
+                    camera.capture(os.path.join(image_path,timestamp(current_waypoint,photo_number)))
 
-        			#Uncomment this when you are running this in windos SImulation
-        			print(os.path.join(image_path,timestamp(current_waypoint,photo_number)))
+                    #Uncomment this when you are running this in windos SImulation
+                    print(os.path.join(image_path,timestamp(current_waypoint,photo_number)))
 
-        			#writing to the log file
-        			image_log_file = open(image_log_path,"a+")
-        			entry = timestamp(current_waypoint,photo_number)+","+str(lat0)+","+str(lon0)+","+str(alt0)+"\n"
-        			image_log_file.write(entry)
-        			image_log_file.close()
+                    #writing to the log file
+                    image_log_file = open(image_log_path,"a+")
+                    entry = timestamp(current_waypoint,photo_number)+","+str(lat0)+","+str(lon0)+","+str(alt0)+"\n"
+                    image_log_file.write(entry)
+                    image_log_file.close()
 
                     time.sleep(1)
-        			
+                    
 
         # try: 
-        # 	result_log = open(result_log_file,'r')
-        # 	data = result_log.readlines()
-        # 	if not len(data) == 0:
+        #   result_log = open(result_log_file,'r')
+        #   data = result_log.readlines()
+        #   if not len(data) == 0:
 
-        # 		for line in data:
-        # 			result_info = line.split(",")
+        #       for line in data:
+        #           result_info = line.split(",")
 
 
         # except:
-        # 	pass
+        #   pass
 
         time.sleep(0.5)
 

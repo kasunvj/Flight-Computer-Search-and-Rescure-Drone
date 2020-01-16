@@ -14,6 +14,7 @@ Connecting with Actual Drone(Pxhawk,Rpi(192.168.43.20) and GCS(Mission Planner)(
 *Terminal 1 - Start MavProxy:
 sudo -s
 mavproxy.py --master=/dev/ttyACM0 --out 192.168.43.220:14550 --out 192.168.43.115:14552
+mavproxy.py --master=/dev/ttyACM0 --out 192.168.0.100:14550 --out 192.168.43.115:14552
 
 *Terminal 2 - Start Python Code(Check Connection String det as connection_string = '192.168.43.220:14550')
 python sitl_ready_check_1.py
