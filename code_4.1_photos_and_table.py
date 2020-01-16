@@ -38,6 +38,7 @@ image_save_path = "/home/pi/SNR-Drone-Flight-Computer-/raw_images"
 '''
 
 #Uncomment this when you are running this in windos SImulation
+testing_commit 
 image_path ="D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/raw_images_temp/"
 image_save_path = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/raw_images/"
 image_log_path = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/imagelog_4.txt"
