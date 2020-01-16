@@ -38,7 +38,7 @@ image_save_path = "/home/pi/SNR-Drone-Flight-Computer-/raw_images"
 '''
 
 #Uncomment this when you are running this in windos SImulation
-testing_commit 
+#testing_commit 
 image_path ="D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/raw_images_temp/"
 image_save_path = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/raw_images/"
 image_log_path = "D:/Projects/Research_Project/SNR-Drone-Flight-Computer-/imagelog_4.txt"
@@ -48,20 +48,20 @@ if not os.path.exists(image_path):
     os.mkdir(image_path)
     logging.info("Images temp storage created")
 else:
-	logging.info("Images temp storage exist. All images moved to raw_images folder for the new mission")
-	files = os.listdir(image_path)
-	for f in files:
-		try:
-			shutil.move(image_path+f,image_save_path)
-		except:
-			pass
+    logging.info("Images temp storage exist. All images moved to raw_images folder for the new mission")
+    files = os.listdir(image_path)
+    for f in files:
+        try:
+            shutil.move(image_path+f,image_save_path)
+        except:
+            pass
 
 
 if not os.path.exists(image_save_path):
-	os.mkdir(image_save_path)
-	logging.info("Images save storage created")
+    os.mkdir(image_save_path)
+    logging.info("Images save storage created")
 else:
-	logging.info("Image save storage exists")
+    logging.info("Image save storage exists")
 
 
 #if not os.path.exists(image_log_path):
@@ -69,8 +69,8 @@ f = open(image_log_path,'w')
 f.close()
 logging.info("Image Log with GPS tag created and reset")
 #else:
-#	logging.info("Image Log with GPS tag created and reset and cleared for the new mission")
-#	open(image_log_path,'w').close()
+#   logging.info("Image Log with GPS tag created and reset and cleared for the new mission")
+#   open(image_log_path,'w').close()
 
 
 
@@ -304,37 +304,37 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
         
         
         if os.path.exists(image_path):
-        	for r0,d0,f0 in os.walk(image_path):
-        		if len(f0) == 0:
-        			photo_number = photo_number + 1
-        			#takeing image
-        				
-        			#Uncomment this when you are running this in raspberry pi
-        			#camera.capture(os.path.join(image_path,timestamp(current_waypoint,photo_number)))
+            for r0,d0,f0 in os.walk(image_path):
+                if len(f0) == 0:
+                    photo_number = photo_number + 1
+                    #takeing image
+                        
+                    #Uncomment this when you are running this in raspberry pi
+                    #camera.capture(os.path.join(image_path,timestamp(current_waypoint,photo_number)))
 
-        			#Uncomment this when you are running this in windos SImulation
-        			print(os.path.join(image_path,timestamp(current_waypoint,photo_number)))
+                    #Uncomment this when you are running this in windos SImulation
+                    print(os.path.join(image_path,timestamp(current_waypoint,photo_number)))
 
-        			#writing to the log file
-        			image_log_file = open(image_log_path,"a+")
-        			entry = timestamp(current_waypoint,photo_number)+" "+str(lat0)+" "+str(lon0)+" "+str(alt0)+"\n"
-        			image_log_file.write(entry)
-        			image_log_file.close()
-        			
+                    #writing to the log file
+                    image_log_file = open(image_log_path,"a+")
+                    entry = timestamp(current_waypoint,photo_number)+" "+str(lat0)+" "+str(lon0)+" "+str(alt0)+"\n"
+                    image_log_file.write(entry)
+                    image_log_file.close()
+                    
 
          try: 
-         	result_log = open(result_log_file,'r')
-         	data = result_log.readlines()
-         	if not len(data) == 0:
+            result_log = open(result_log_file,'r')
+            data = result_log.readlines()
+            if not len(data) == 0:
 
-         		for line in data:
-         			result_info = line.split(",")
-         			print(result_info[0])
+                for line in data:
+                    result_info = line.split(",")
+                    print(result_info[0])
 
 
          except:
-         	time.sleep(2)
-         	pass
+            time.sleep(2)
+            pass
 
         time.sleep(0.5)
 
