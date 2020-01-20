@@ -70,13 +70,13 @@ else:
     logging.info("Image save storage exists")
 
 
-#if not os.path.exists(image_log_path):
-#f = open(image_log_path,'w')
-#f.close()
-logging.info("Image Log with GPS tag created and reset")
-#else:
-#   logging.info("Image Log with GPS tag created and reset and cleared for the new mission")
-#   open(image_log_path,'w').close()
+# if not os.path.exists(image_log_path):
+# 	f = open(image_log_path,'w')
+# 	f.close()
+# 	logging.info("Image Log with GPS tag created and reset")
+# else:
+# 	logging.info("Image Log with GPS tag created and reset and cleared for the new mission")
+# 	open(image_log_path,'w').close()
 
 
 
@@ -87,6 +87,7 @@ current_waypoint = 0
 current_photo = 0
 test_com = False
 photo_time_interval = 3
+result_and_image_info = [0,0,0,0]
 
 #methods----------------------------------------------------
 '''
@@ -322,7 +323,7 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
 
                     #writing to the log file
                     image_log_file = open(image_log_path,"a+")
-                    entry = timestamp(current_waypoint,photo_number)+" "+str(lat0)+" "+str(lon0)+" "+str(alt0)+"\n"
+                    entry = timestamp(current_waypoint,photo_number)+","+str(lat0)+","+str(lon0)+","+str(alt0)+"\n"
                     image_log_file.write(entry)
                     image_log_file.close()
                     
@@ -334,7 +335,20 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
         		num = 0
         		for line in data:
         			result_info = line.split(",")
-        			print(num,":",result_info[0]," Detected ",result_info[1], " in " ,result_info[2], "% Confidence. Press the number to engage" )
+        			print(result_info[0].split()[0],":",result_info[0]," Detected ",result_info[1], " in " ,result_info[2], "% Confidence. Press the number to engage" )
+        			image_log_file_2 = open(image_log_path,"r")
+        			for line_inside_image_log in image_log_file_2:
+        				image_info = line_inside_image_log.split(",")
+        				if result_info[0] == image_info[0]:
+        					for row in rersult_and_image_info:
+        						if not result_info[0] in row:
+        							result_and_image_info[row_count][0] = result_info[0].split()[0]
+        							result_and_image_info[row_count][1] = image_info[1]
+        							result_and_image_info[row_count][2] = image_info[2]
+        							result_and_image_info[row_count][3] = image_info[3]
+        					  
+
+
         			num = num + 1
 
         	
@@ -350,20 +364,27 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
 
         
 
-        if (((time.time()-time1)%5) == 0):
-        	input_number = input("Type the action:")
-        	if (input_number == 'e'):
-        		pass
-        	else:
-        		print("GO to", data)
+        # if (((time.time()-time1)%5) == 0):
+        # 	
 
-        
 
 
         time.sleep(0.5)
 
 
     logging.info("waypont reach: %s", current_waypoint+1)
+    print(result_and_image_info)
+
+    input_number = input("Type the The image number:")
+    if (input_number == 'e'):
+    	pass
+    else:
+    	try:
+    		for row in result_and_image_info:
+    			if input_number in row:
+    				print("Go to:",row)
+    	except: 
+    		pass
 
 
     current_waypoint = current_waypoint +1 
