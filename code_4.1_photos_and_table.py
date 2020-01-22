@@ -87,7 +87,7 @@ current_waypoint = 0
 current_photo = 0
 test_com = False
 photo_time_interval = 3
-result_and_image_info = [0,0,0,0]
+result_and_image_info = np.zeros((10,4))
 
 #methods----------------------------------------------------
 '''
@@ -279,7 +279,7 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
     logging.info("Gimble Pitch: %s Roll: %s",get_gimbal_angle()[0],get_gimbal_angle()[1])
 
     #sending moving command
-    time.sleep(10)
+    time.sleep(2)
     vehicle.simple_goto(point)
 
     #getting details of vehical location
@@ -329,27 +329,36 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
                     
 
         try: 
+        	#if ANN found a result on a image, the result is recorded on
+        	#result_log.txt. below few lines search the relevent image in 
+        	#image_log_4.txt and get the GPS coordnates relevent to that image
+        	#and save it in a matrix result_and_image_info  
         	result_log = open(result_log_file,'r')
         	data = result_log.readlines()
         	if not len(data) == 0:
         		num = 0
+        		row_count = 0
         		for line in data:
         			result_info = line.split(",")
-        			print(result_info[0].split()[0],":",result_info[0]," Detected ",result_info[1], " in " ,result_info[2], "% Confidence. Press the number to engage" )
+        			#print(result_info[0].split()[0],":",result_info[0]," Detected ",result_info[1], " in " ,result_info[2], "% Confidence. Press the number to engage" )
         			image_log_file_2 = open(image_log_path,"r")
         			for line_inside_image_log in image_log_file_2:
         				image_info = line_inside_image_log.split(",")
-        				if result_info[0] == image_info[0]:
-        					for row in rersult_and_image_info:
-        						if not result_info[0] in row:
-        							result_and_image_info[row_count][0] = result_info[0].split()[0]
-        							result_and_image_info[row_count][1] = image_info[1]
-        							result_and_image_info[row_count][2] = image_info[2]
-        							result_and_image_info[row_count][3] = image_info[3]
+        				if result_info[0] == image_info[0]:	
+        					#print(result_info[0],"==?",image_info[0])
+
+        					result_and_image_info[row_count][0] = result_info[0].split()[0]
+        					result_and_image_info[row_count][1] = image_info[1]
+        					result_and_image_info[row_count][2] = image_info[2]
+        					result_and_image_info[row_count][3] = image_info[3]
+        					row_count = row_count +1
+        					
+
         					  
 
 
         			num = num + 1
+        	
 
         	
 
@@ -375,19 +384,29 @@ while (current_waypoint < get_non_zero_rows(waypoints)):
     logging.info("waypont reach: %s", current_waypoint+1)
     print(result_and_image_info)
 
+    #once a way point is reached GSC is asked for a command to go to a location where a photo is taken. 
+
+
     input_number = input("Type the The image number:")
     if (input_number == 'e'):
-    	pass
+    	current_waypoint = current_waypoint +1
     else:
     	try:
-    		for row in result_and_image_info:
-    			if input_number in row:
-    				print("Go to:",row)
+    		row_count = 0
+    		for i in range(0,result_and_image_info.shape[0]):
+    			if int(input_number) == result_and_image_info[i][0]:
+    				print("Go to:",result_and_image_info[i][1]," ",result_and_image_info[row_count][2])
+    				time.sleep(4)
+    				vehicle.simple_goto(LocationGlobalRelative(result_and_image_info[i][1],result_and_image_info[row_count][2],result_and_image_info[row_count][3]))
+    			
+
+    			row_count = row_count +1 
     	except: 
+    		print("Error")
     		pass
 
 
-    current_waypoint = current_waypoint +1 
+     
 
     #current_waypoint is the waypoint drone directing to
 
